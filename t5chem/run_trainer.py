@@ -14,8 +14,10 @@ from .data_utils import (AccuracyMetrics, CalMSELoss, LineByLineTextDataset,
                         T5ChemTasks, TaskPrefixDataset, TaskSettings,
                         data_collator)
 from .model import T5ForProperty
+# TODO: remove these tokenizers
 from .mol_tokenizers import (AtomTokenizer, MolTokenizer, SelfiesTokenizer,
                             SimpleTokenizer)
+from transformers import PreTrainedTokenizer
 from .trainer import EarlyStopTrainer
 
 tokenizer_map: Dict[str, MolTokenizer] = {
@@ -125,14 +127,15 @@ def train(args):
         if not hasattr(model.config, 'tokenizer'):
             logging.warning("No tokenizer type detected, will use SimpleTokenizer as default")
         tokenizer_type = getattr(model.config, "tokenizer", 'simple')
-        vocab_path = os.path.join(args.pretrain, 'vocab.pt')
+        vocab_path = os.path.join(args.pretrain, 't5chem_new.json')
         if not os.path.isfile(vocab_path):
             vocab_path = args.vocab
             if not vocab_path:
                 raise ValueError(
                         "Can't find a vocabulary file at path '{}'.".format(args.pretrain)
                     )
-        tokenizer = tokenizer_map[tokenizer_type](vocab_file=vocab_path)
+        assert tokenizer_type == "simple"
+        tokenizer = PreTrainedTokenizer(tokenizer_file=vocab_path)
         model.config.tokenizer = tokenizer_type # type: ignore
         model.config.task_type = args.task_type # type: ignore
     else:
