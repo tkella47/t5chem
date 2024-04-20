@@ -17,7 +17,7 @@ from .model import T5ForProperty
 # TODO: remove these tokenizers
 from .mol_tokenizers import (AtomTokenizer, MolTokenizer, SelfiesTokenizer,
                             SimpleTokenizer)
-from transformers import PreTrainedTokenizer
+from transformers import PreTrainedTokenizerFast As PreTrainedTokenizer
 from .trainer import EarlyStopTrainer
 
 tokenizer_map: Dict[str, MolTokenizer] = {
