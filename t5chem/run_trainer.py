@@ -147,8 +147,8 @@ def train(args):
             args.tokenizer = 'simple'
         assert args.tokenizer in ('simple', 'atom', 'selfies'), \
             "{} tokenizer is not supported."
-        vocab_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'vocab/'+args.tokenizer+'.pt')
-        tokenizer = tokenizer_map[args.tokenizer](vocab_file=vocab_path)
+        vocab_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'vocab/'+args.tokenizer+'.json')
+        tokenizer = PreTrainedTokenizer(tokenizer_file=vocab_path)
         config = T5Config(
             vocab_size=len(tokenizer),
             pad_token_id=tokenizer.pad_token_id,
@@ -167,7 +167,7 @@ def train(args):
             model = T5ForProperty(config, head_type=task.output_layer, num_classes=args.num_classes)
 
     os.makedirs(args.output_dir, exist_ok=True)
-    tokenizer.save_vocabulary(os.path.join(args.output_dir, 'vocab.pt'))
+    tokenizer.save_pretrained(args.output_dir)
     if args.task_type == 'pretrain':
         dataset = LineByLineTextDataset(
             tokenizer=tokenizer, 
