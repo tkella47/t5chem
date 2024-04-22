@@ -44,7 +44,6 @@ setup(
         "transformers==4.10.2",
         "selfies==1.0.4",
         "scikit-learn==0.24.1",
-        "torchtext==0.8.0",
         "scipy==1.6.0",
         "tensorboard==2.6.0",
         "pandas==1.2.4",
