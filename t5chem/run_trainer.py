@@ -14,8 +14,10 @@ from .data_utils import (AccuracyMetrics, CalMSELoss, LineByLineTextDataset,
                         T5ChemTasks, TaskPrefixDataset, TaskSettings,
                         data_collator)
 from .model import T5ForProperty
+# TODO: remove these tokenizers
 from .mol_tokenizers import (AtomTokenizer, MolTokenizer, SelfiesTokenizer,
                             SimpleTokenizer)
+from transformers import PreTrainedTokenizerFast as PreTrainedTokenizer
 from .trainer import EarlyStopTrainer
 
 tokenizer_map: Dict[str, MolTokenizer] = {
@@ -23,7 +25,11 @@ tokenizer_map: Dict[str, MolTokenizer] = {
     'atom': AtomTokenizer,  # type: ignore
     'selfies': SelfiesTokenizer,    # type: ignore
 }
-
+TOKENS = {"mask_token" : "<mask>",
+            "unk_token" : "<unk>",
+            "pad_token" : "<pad>",
+            "sos_token" : "<s>",
+            "eos_token" : "</s>"}
 
 def add_args(parser):
     parser.add_argument(
@@ -125,14 +131,15 @@ def train(args):
         if not hasattr(model.config, 'tokenizer'):
             logging.warning("No tokenizer type detected, will use SimpleTokenizer as default")
         tokenizer_type = getattr(model.config, "tokenizer", 'simple')
-        vocab_path = os.path.join(args.pretrain, 'vocab.pt')
+        vocab_path = os.path.join(args.pretrain, 't5chem_new.json')
         if not os.path.isfile(vocab_path):
             vocab_path = args.vocab
             if not vocab_path:
                 raise ValueError(
                         "Can't find a vocabulary file at path '{}'.".format(args.pretrain)
                     )
-        tokenizer = tokenizer_map[tokenizer_type](vocab_file=vocab_path)
+        assert tokenizer_type == "simple"
+        tokenizer = PreTrainedTokenizer(tokenizer_file=vocab_path, **TOKENS)
         model.config.tokenizer = tokenizer_type # type: ignore
         model.config.task_type = args.task_type # type: ignore
     else:
@@ -144,8 +151,8 @@ def train(args):
             args.tokenizer = 'simple'
         assert args.tokenizer in ('simple', 'atom', 'selfies'), \
             "{} tokenizer is not supported."
-        vocab_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'vocab/'+args.tokenizer+'.pt')
-        tokenizer = tokenizer_map[args.tokenizer](vocab_file=vocab_path)
+        vocab_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'vocab/'+args.tokenizer+'.json')
+        tokenizer = PreTrainedTokenizer(tokenizer_file=vocab_path, **TOKENS)
         config = T5Config(
             vocab_size=len(tokenizer),
             pad_token_id=tokenizer.pad_token_id,
@@ -164,7 +171,7 @@ def train(args):
             model = T5ForProperty(config, head_type=task.output_layer, num_classes=args.num_classes)
 
     os.makedirs(args.output_dir, exist_ok=True)
-    tokenizer.save_vocabulary(os.path.join(args.output_dir, 'vocab.pt'))
+    tokenizer.save_pretrained(args.output_dir)
     if args.task_type == 'pretrain':
         dataset = LineByLineTextDataset(
             tokenizer=tokenizer, 
@@ -253,6 +260,9 @@ def train(args):
     trainer.train()
     print(args)
     print("logging dir: {}".format(training_args.logging_dir))
+    import transformers
+    if transformers.__version__ != "4.10.2":
+        torch.save(model.state_dict(), "pytorch_model.bin")
     trainer.save_model(args.output_dir)
 
 

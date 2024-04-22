@@ -47,13 +47,15 @@ class LineByLineTextDataset(Dataset):
         
     def __getitem__(self, idx: int) -> torch.Tensor:
         line: str = linecache.getline(self._file_path, idx + 1).strip()
-        sample: BatchEncoding = self.tokenizer(
+        sample = self.tokenizer(
                         self.prefix+line,
                         max_length=self.max_length,
                         padding="do_not_pad",
                         truncation=True,
                         return_tensors='pt',
                     )
+        # Assert sample is BatchEncoding
+        assert isinstance(sample, BatchEncoding) # Should be a batchEncoding.
         return sample['input_ids'].squeeze(0)
       
     def __len__(self) -> int:
