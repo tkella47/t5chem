@@ -260,6 +260,9 @@ def train(args):
     trainer.train()
     print(args)
     print("logging dir: {}".format(training_args.logging_dir))
+    import transformers
+    if transformers.__version__ != "4.10.2":
+        torch.save(model.state_dict(), "pytorch_model.bin")
     trainer.save_model(args.output_dir)
 
 
