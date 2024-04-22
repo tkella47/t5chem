@@ -9,13 +9,17 @@ import torch
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 from torch.utils.data.dataloader import DataLoader
 from tqdm.auto import tqdm
-from transformers import T5Config, T5ForConditionalGeneration
+from transformers import T5Config, T5ForConditionalGeneration, PreTrainedTokenizerFast
 
 from .data_utils import T5ChemTasks, TaskPrefixDataset, data_collator
 from .evaluation import get_rank, standize
 from .model import T5ForProperty
 from .mol_tokenizers import AtomTokenizer, SelfiesTokenizer, SimpleTokenizer
-
+TOKENS = {"mask_token" : "<mask>",
+            "unk_token" : "<unk>",
+            "pad_token" : "<pad>",
+            "sos_token" : "<s>",
+            "eos_token" : "</s>"}
 
 def add_args(parser):
     parser.add_argument(
@@ -79,7 +83,7 @@ def predict(args):
     else:
         Tokenizer = SelfiesTokenizer
 
-    tokenizer = Tokenizer(vocab_file=os.path.join(args.model_dir, 'vocab.pt'))
+    tokenizer = PreTrainedTokenizerFast(tokenizer_file=os.path.join(args.model_dir, 'tokenizer.json'), **TOKENS)
 
     if os.path.isfile(args.data_dir):
         args.data_dir, base = os.path.split(args.data_dir)

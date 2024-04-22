@@ -17,7 +17,7 @@ from .model import T5ForProperty
 # TODO: remove these tokenizers
 from .mol_tokenizers import (AtomTokenizer, MolTokenizer, SelfiesTokenizer,
                             SimpleTokenizer)
-from transformers import PreTrainedTokenizerFast As PreTrainedTokenizer
+from transformers import PreTrainedTokenizerFast as PreTrainedTokenizer
 from .trainer import EarlyStopTrainer
 
 tokenizer_map: Dict[str, MolTokenizer] = {
@@ -25,7 +25,11 @@ tokenizer_map: Dict[str, MolTokenizer] = {
     'atom': AtomTokenizer,  # type: ignore
     'selfies': SelfiesTokenizer,    # type: ignore
 }
-
+TOKENS = {"mask_token" : "<mask>",
+            "unk_token" : "<unk>",
+            "pad_token" : "<pad>",
+            "sos_token" : "<s>",
+            "eos_token" : "</s>"}
 
 def add_args(parser):
     parser.add_argument(
@@ -135,7 +139,7 @@ def train(args):
                         "Can't find a vocabulary file at path '{}'.".format(args.pretrain)
                     )
         assert tokenizer_type == "simple"
-        tokenizer = PreTrainedTokenizer(tokenizer_file=vocab_path)
+        tokenizer = PreTrainedTokenizer(tokenizer_file=vocab_path, **TOKENS)
         model.config.tokenizer = tokenizer_type # type: ignore
         model.config.task_type = args.task_type # type: ignore
     else:
@@ -148,7 +152,7 @@ def train(args):
         assert args.tokenizer in ('simple', 'atom', 'selfies'), \
             "{} tokenizer is not supported."
         vocab_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'vocab/'+args.tokenizer+'.json')
-        tokenizer = PreTrainedTokenizer(tokenizer_file=vocab_path)
+        tokenizer = PreTrainedTokenizer(tokenizer_file=vocab_path, **TOKENS)
         config = T5Config(
             vocab_size=len(tokenizer),
             pad_token_id=tokenizer.pad_token_id,
