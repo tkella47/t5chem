@@ -14,17 +14,9 @@ from .data_utils import (AccuracyMetrics, CalMSELoss, LineByLineTextDataset,
                         T5ChemTasks, TaskPrefixDataset, TaskSettings,
                         data_collator)
 from .model import T5ForProperty
-# TODO: remove these tokenizers
-from .mol_tokenizers import (AtomTokenizer, MolTokenizer, SelfiesTokenizer,
-                            SimpleTokenizer)
 from transformers import PreTrainedTokenizerFast as PreTrainedTokenizer
 from .trainer import EarlyStopTrainer
 
-tokenizer_map: Dict[str, MolTokenizer] = {
-    'simple': SimpleTokenizer,  # type: ignore
-    'atom': AtomTokenizer,  # type: ignore
-    'selfies': SelfiesTokenizer,    # type: ignore
-}
 TOKENS = {"mask_token" : "<mask>",
             "unk_token" : "<unk>",
             "pad_token" : "<pad>",

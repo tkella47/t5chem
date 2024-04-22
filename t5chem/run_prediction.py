@@ -14,7 +14,7 @@ from transformers import T5Config, T5ForConditionalGeneration, PreTrainedTokeniz
 from .data_utils import T5ChemTasks, TaskPrefixDataset, data_collator
 from .evaluation import get_rank, standize
 from .model import T5ForProperty
-from .mol_tokenizers import AtomTokenizer, SelfiesTokenizer, SimpleTokenizer
+#from .mol_tokenizers import AtomTokenizer, SelfiesTokenizer, SimpleTokenizer
 TOKENS = {"mask_token" : "<mask>",
             "unk_token" : "<unk>",
             "pad_token" : "<pad>",
@@ -76,13 +76,6 @@ def predict(args):
     config = T5Config.from_pretrained(args.model_dir)
     task = T5ChemTasks[config.task_type]
     tokenizer_type = getattr(config, "tokenizer")
-    if tokenizer_type == "simple":
-        Tokenizer = SimpleTokenizer
-    elif tokenizer_type == 'atom':
-        Tokenizer = AtomTokenizer
-    else:
-        Tokenizer = SelfiesTokenizer
-
     tokenizer = PreTrainedTokenizerFast(tokenizer_file=os.path.join(args.model_dir, 'tokenizer.json'), **TOKENS)
 
     if os.path.isfile(args.data_dir):
