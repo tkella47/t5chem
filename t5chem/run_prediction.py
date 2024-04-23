@@ -123,6 +123,7 @@ def predict(args):
             del batch['labels']
             with torch.no_grad():
                 outputs = model.generate(**batch, **task_specific_params['Reaction'])
+                breakpoint()
             for i,pred in enumerate(outputs):
                 prod = tokenizer.decode(pred, skip_special_tokens=True,
                         clean_up_tokenization_spaces=False)
