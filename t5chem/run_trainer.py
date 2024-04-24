@@ -143,7 +143,7 @@ def train(args):
             args.tokenizer = 'simple'
         assert args.tokenizer in ('simple', 'atom', 'selfies'), \
             "{} tokenizer is not supported."
-        vocab_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'vocab/'+args.tokenizer+'.json')
+        vocab_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'vocab/tokenizer.json')
         tokenizer = PreTrainedTokenizer(tokenizer_file=vocab_path, **TOKENS)
         config = T5Config(
             vocab_size=len(tokenizer),
