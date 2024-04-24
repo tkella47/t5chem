@@ -126,7 +126,7 @@ def predict(args):
             for i,pred in enumerate(outputs):
                 prod = tokenizer.decode(pred, skip_special_tokens=True,
                         clean_up_tokenization_spaces=False)
-                predictions[i % args.num_preds].append(prod)
+                predictions[i % args.num_preds].append(prod.replace(" ",""))
 
     else:
         predictions = []
