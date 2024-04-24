@@ -123,7 +123,7 @@ def train(args):
         if not hasattr(model.config, 'tokenizer'):
             logging.warning("No tokenizer type detected, will use SimpleTokenizer as default")
         tokenizer_type = getattr(model.config, "tokenizer", 'simple')
-        vocab_path = os.path.join(args.pretrain, 't5chem_new.json')
+        vocab_path = os.path.join(args.pretrain, 'tokenizer.json')
         if not os.path.isfile(vocab_path):
             vocab_path = args.vocab
             if not vocab_path:
