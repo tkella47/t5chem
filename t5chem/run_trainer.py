@@ -13,15 +13,11 @@ from transformers import (DataCollatorForLanguageModeling, T5Config,
 from .data_utils import (AccuracyMetrics, CalMSELoss, LineByLineTextDataset,
                         T5ChemTasks, TaskPrefixDataset, TaskSettings,
                         data_collator)
+from .data_utils import TOKENS
 from .model import T5ForProperty
 from transformers import PreTrainedTokenizerFast as PreTrainedTokenizer
 from .trainer import EarlyStopTrainer
 
-TOKENS = {"mask_token" : "<mask>",
-            "unk_token" : "<unk>",
-            "pad_token" : "<pad>",
-            "sos_token" : "<s>",
-            "eos_token" : "</s>"}
 
 def add_args(parser):
     parser.add_argument(
