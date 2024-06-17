@@ -10,6 +10,12 @@ from torch.utils.data import Dataset
 from transformers import BatchEncoding, PreTrainedTokenizer
 from transformers.trainer_utils import PredictionOutput
 
+TOKENS = {"mask_token" : "<mask>",
+            "unk_token" : "<unk>",
+            "pad_token" : "<pad>",
+            "bos_token" : "<pad>",
+            "sos_token" : "<pad>",
+            "eos_token" : "</s>"}
 
 class TaskSettings(NamedTuple):
     prefix: str

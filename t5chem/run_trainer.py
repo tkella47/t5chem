@@ -13,15 +13,11 @@ from transformers import (DataCollatorForLanguageModeling, T5Config,
 from .data_utils import (AccuracyMetrics, CalMSELoss, LineByLineTextDataset,
                         T5ChemTasks, TaskPrefixDataset, TaskSettings,
                         data_collator)
+from .data_utils import TOKENS
 from .model import T5ForProperty
 from transformers import PreTrainedTokenizerFast as PreTrainedTokenizer
 from .trainer import EarlyStopTrainer
 
-TOKENS = {"mask_token" : "<mask>",
-            "unk_token" : "<unk>",
-            "pad_token" : "<pad>",
-            "sos_token" : "<s>",
-            "eos_token" : "</s>"}
 
 def add_args(parser):
     parser.add_argument(
@@ -123,7 +119,7 @@ def train(args):
         if not hasattr(model.config, 'tokenizer'):
             logging.warning("No tokenizer type detected, will use SimpleTokenizer as default")
         tokenizer_type = getattr(model.config, "tokenizer", 'simple')
-        vocab_path = os.path.join(args.pretrain, 't5chem_new.json')
+        vocab_path = os.path.join(args.pretrain, 'tokenizer.json')
         if not os.path.isfile(vocab_path):
             vocab_path = args.vocab
             if not vocab_path:
@@ -143,7 +139,7 @@ def train(args):
             args.tokenizer = 'simple'
         assert args.tokenizer in ('simple', 'atom', 'selfies'), \
             "{} tokenizer is not supported."
-        vocab_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'vocab/'+args.tokenizer+'.json')
+        vocab_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'vocab/tokenizer.json')
         tokenizer = PreTrainedTokenizer(tokenizer_file=vocab_path, **TOKENS)
         config = T5Config(
             vocab_size=len(tokenizer),

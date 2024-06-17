@@ -15,11 +15,7 @@ from .data_utils import T5ChemTasks, TaskPrefixDataset, data_collator
 from .evaluation import get_rank, standize
 from .model import T5ForProperty
 #from .mol_tokenizers import AtomTokenizer, SelfiesTokenizer, SimpleTokenizer
-TOKENS = {"mask_token" : "<mask>",
-            "unk_token" : "<unk>",
-            "pad_token" : "<pad>",
-            "sos_token" : "<s>",
-            "eos_token" : "</s>"}
+from .data_utils import TOKENS
 
 def add_args(parser):
     parser.add_argument(
