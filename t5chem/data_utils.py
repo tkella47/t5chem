@@ -16,6 +16,7 @@ TOKENS = {"mask_token" : "<mask>",
             "bos_token" : "<pad>",
             "sos_token" : "<pad>",
             "eos_token" : "</s>"}
+DEFAULT_VOCAB = os.path.join(os.getcwd(), "t5chem","vocab","tokenizer.json")
 
 class TaskSettings(NamedTuple):
     prefix: str

@@ -15,7 +15,8 @@ from .data_utils import T5ChemTasks, TaskPrefixDataset, data_collator
 from .evaluation import get_rank, standize
 from .model import T5ForProperty
 #from .mol_tokenizers import AtomTokenizer, SelfiesTokenizer, SimpleTokenizer
-from .data_utils import TOKENS
+from .data_utils import TOKENS, DEFAULT_VOCAB
+import warnings
 
 def add_args(parser):
     parser.add_argument(
@@ -72,7 +73,11 @@ def predict(args):
     config = T5Config.from_pretrained(args.model_dir)
     task = T5ChemTasks[config.task_type]
     tokenizer_type = getattr(config, "tokenizer")
-    tokenizer = PreTrainedTokenizerFast(tokenizer_file=os.path.join(args.model_dir, 'tokenizer.json'), **TOKENS)
+    vocab_file_in_model = os.path.join(args.model_dir, 'tokenizer.json')
+    vocab_path = {True: vocab_file_in_model, False: DEFAULT_VOCAB}[os.path.exists(vocab_file_in_model)]
+    if vocab_path == DEFAULT_VOCAB:
+        warnings.warn(f"tokenizer.json was not found at {args.model_dir}. Using tokenizer.json located at {DEFAULT_VOCAB}")
+    tokenizer = PreTrainedTokenizerFast(tokenizer_file=vocab_path, **TOKENS)
 
     if os.path.isfile(args.data_dir):
         args.data_dir, base = os.path.split(args.data_dir)
