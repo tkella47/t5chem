@@ -2,8 +2,8 @@
 from .__version__ import __version__
 from .data_utils import LineByLineTextDataset, TaskPrefixDataset, data_collator
 from .model import T5ForProperty
-from .mol_tokenizers import (AtomTokenizer, MolTokenizer, SelfiesTokenizer,
-                             SimpleTokenizer)
+#from .mol_tokenizers import (AtomTokenizer, MolTokenizer, SelfiesTokenizer,
+#                             SimpleTokenizer)
 from .trainer import EarlyStopTrainer
 
 __author__ = 'Jocelyn Lu <jl8570@nyu.edu>'
